@@ -1,14 +1,26 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { UserContext, UserDispatchContext } from '../userContext';
+import Link from 'next/link'
+import Router, { useRouter } from 'next/router'
+
 
 
 export default function Login() {
 
+  const user = React.useContext(UserContext)
+  const setUser = useContext(UserDispatchContext)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      Router.push('/onboarding')
+    } 
+  }, [user]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -26,7 +38,8 @@ export default function Login() {
     fetch("http://127.0.0.1:8000/users/signin", requestOptions)
     .then(response => response.json())
     .then(result => {
-      console.log(result);
+      setUser({token: result.access, isLoggedIn: true})
+
     })
     .catch(error => console.log('error', error));
   }
@@ -51,6 +64,7 @@ export default function Login() {
         <h1 className={styles.title}>
           Login to Panasend
         </h1>
+        <p>{user.isLoggedIn}</p>
 
         <div className="form">
           <form onSubmit={handleSubmit}>
