@@ -30,7 +30,7 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  if (!user.isLoggedIn) {
+  if (!user.isLoggedIn && Router.pathname != "/signup") {
     Router.push('/login')
   }
   
