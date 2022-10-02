@@ -5,59 +5,44 @@ import React, { useState, useContext, useEffect } from 'react';
 import { UserContext, UserDispatchContext } from '../userContext';
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
+import ls from 'localstorage-slim';
 
 
 
 export default function Signup() {
 
-  const user = React.useContext(UserContext)
-  const setUser = useContext(UserDispatchContext)
-
   const [email, setEmail] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [fName, setFName] = useState('')
+  const [lName, setLName] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    if (user.isLoggedIn) {
-      Router.push('/onboarding')
-    } 
-  }, [user]);
 
-  const handleSubmit = e => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     var requestOptions = {
       method: 'POST',
-      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({"email": email, "password": password, "first_name": firstName, "last_name": lastName}),
+      body: JSON.stringify({"email": email, "password": password, "first_name": fName, "last_name": lName}),
     };
 
-    fetch("http://127.0.0.1:8000/users/signup", requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      setUser({token: result.access, isLoggedIn: true})
-
-    })
-    .catch(error => console.log('error', error));
+    try {
+      const res = await fetch("http://127.0.0.1:8000/users/signup", requestOptions)
+      const res_data = await res.json()
+      ls.set('user', res_data.access, { ttl: 3600 })
+      ls.set('onboardingDone', false)
+      Router.push('/onboarding')
+    }
+    catch (bug) {
+      setError('An error occured while signup. Please check your details.')
+    }
   }
 
-  const onEmailChange = e => {
-    setEmail(e.target.value);
-  }
-  const onPasswordChange = e => {
-    setPassword(e.target.value);
-  }
-  const onFirstNameChange = e => {
-    setFirstName(e.target.value);
-  }
-  const onLastNameChange = e => {
-    setLastName(e.target.value);
-  }
+
 
   return (
     <div className={styles.container}>
@@ -76,20 +61,21 @@ export default function Signup() {
           <form onSubmit={handleSubmit}>
           <div className="input-container">
               <label>First name </label>
-              <input type="text" name="firstname" value={firstName} onChange={onFirstNameChange} required />
+              <input type="text" name="firstname" value={fName} onChange={e => setFName(e.target.value)} required />
             </div>
             <div className="input-container">
               <label>Last name </label>
-              <input type="text" name="lastname" value={lastName} onChange={onLastNameChange} required />
+              <input type="text" name="lastname" value={lName} onChange={e => setLName(e.target.value)} required />
             </div>
             <div className="input-container">
               <label>Email </label>
-              <input type="text" name="email" value={email} onChange={onEmailChange} required />
+              <input type="text" name="email" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
             <div className="input-container">
               <label>Password </label>
-              <input type="password" name="password" value={password} onChange={onPasswordChange} required />
+              <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
+            <span style={{'color': 'red'}}>{error}</span>
             <div className="button-container">
               <input type="submit" />
             </div>

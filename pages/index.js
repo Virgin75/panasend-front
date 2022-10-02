@@ -1,20 +1,31 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
-import useUserTokenAuth from '../utils/checkLogin'
+import React, { useState, useContext, useEffect } from 'react';
+import Router, { useRouter } from 'next/router'
+import IsLoggedInOrRedirect from '../components/isLoggedIn';
+import ls from 'localstorage-slim';
 
-export default function Home() {
-  const [token, setToken] = useUserTokenAuth()
+
+export default function Home({ data }) {
+
+  const logOut = () => {
+    ls.set('user', null)
+    Router.push('/login')
+  }
 
   return (
-    <div className={styles.container}>
+    <IsLoggedInOrRedirect>
+      <div className={styles.container}>
       <Head>
-        <title>index Panasend {token}</title>
+        <title>index Panasend</title>
         <meta name="description" content="Log in to your Panasend account." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
+      <a onClick={logOut}>Log out</a>
+      <span>{data.username}</span>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Panasend</a>
         </h1>
@@ -31,5 +42,15 @@ export default function Home() {
         </a>
       </footer>
     </div>
+    </IsLoggedInOrRedirect> 
   )
+}
+
+export async function getServerSideProps() {
+  // Fetch data from external API
+  const res = await fetch('https://random-data-api.com/api/users/random_user')
+  const data = await res.json()
+
+  // Pass data to the page via props
+  return { props: { data } }
 }
