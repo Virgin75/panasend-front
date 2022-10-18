@@ -6,6 +6,8 @@ import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import ls from 'localstorage-slim';
 
+import { UserContext } from '../userContext';
+import { UserDispatchContext } from '../userContext';
 
 export default function Login() {
 
@@ -13,12 +15,16 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  const user = useContext(UserContext);
+  const setUser = useContext(UserDispatchContext);
 
+  console.log(user)
   const handleSubmit = async(e) => {
     e.preventDefault();
 
     var requestOptions = {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -28,9 +34,15 @@ export default function Login() {
     try {
       const res = await fetch("http://127.0.0.1:8000/users/signin", requestOptions)
       const res_data = await res.json()
-      ls.set('user', res_data.access, { ttl: 3600 })
       ls.set('onboardingDone', res_data.user.onboarding_done)
-      Router.push('/')
+      ls.set('user_details', {
+        first_name: res_data.user.first_name,
+        last_name: res_data.user.last_name,
+        email: res_data.user.email
+      })
+      ls.set('first_wks', res_data.workspaces_id[0][0])
+      console.log(res_data.workspaces_id)
+      Router.push('/wks/'+res_data.workspaces_id[0][0]+'/campaigns')
     }
     catch (bug) {
       setError('An error occured while signin. Maybe your credentials are invalid?')
@@ -51,7 +63,6 @@ export default function Login() {
         <h1 className={styles.title}>
           Login to Panasend
         </h1>
-
         <div className="form">
           <form onSubmit={handleSubmit}>
             <div className="input-container">
@@ -67,6 +78,9 @@ export default function Login() {
               <input type="submit" />
             </div>
           </form>
+          <Link href="/signup">
+          <a>Not registered? Sign up</a>
+        </Link>
         </div>
 
       </main>

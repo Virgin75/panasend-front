@@ -1,6 +1,4 @@
 import React, { createContext, useState, useEffect, useLayoutEffect } from "react";
-import Router, { useRouter } from 'next/router'
-import useDidMountEffect from './useDidMountEffect'
 
 // Create two context:
 // UserContext: to query the context state
@@ -12,38 +10,17 @@ const UserDispatchContext = createContext(undefined)
 // components that needs the state in this context
 function UserProvider({ children }) {
   const [user, setUser] = useState({
-    token: "",
-    isLoggedIn: false,
+    first_name: "a",
+    last_name: "",
+    email: ""
   })
-  const [onboardingDone, setOnboardingDone] = useState(false)
-console.log(user)
+  const [workspace_id, setWorkspaceID] = useState("")
+  const [company_id, setCompanyID] = useState("")
 
-useEffect(() => {
-  
-    const getCookieValue = (name) => (
-        document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
-    )
-    const token = getCookieValue('access')
-    if (token) {
-        setUser({   
-          token: token,
-          isLoggedIn: true
-        })
-    }
-    
-}, []);
-
-// If user is not logged in or not on signup page, we redirect him to login page
-useDidMountEffect(() => {
-  if (!user.isLoggedIn && Router.pathname != "/signup") {
-    Router.push('/login')
-  }
-  
-}, [user]);
 
   return (
-    <UserContext.Provider value={{user, onboardingDone}}>
-      <UserDispatchContext.Provider value={{setUser, setOnboardingDone}}>
+    <UserContext.Provider value={{user, workspace_id, company_id}}>
+      <UserDispatchContext.Provider value={{setUser, setWorkspaceID, setCompanyID}}>
         {children}
       </UserDispatchContext.Provider>
     </UserContext.Provider>

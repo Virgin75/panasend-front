@@ -23,6 +23,7 @@ export default function Signup() {
 
     var requestOptions = {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -33,8 +34,12 @@ export default function Signup() {
     try {
       const res = await fetch("http://127.0.0.1:8000/users/signup", requestOptions)
       const res_data = await res.json()
-      ls.set('user', res_data.access, { ttl: 3600 })
       ls.set('onboardingDone', false)
+      ls.set('user_details', {
+        first_name: res_data.user.first_name,
+        last_name: res_data.user.last_name,
+        email: res_data.user.email
+      })
       Router.push('/onboarding')
     }
     catch (bug) {
@@ -80,6 +85,9 @@ export default function Signup() {
               <input type="submit" />
             </div>
           </form>
+          <Link href="/login">
+          <a>Already registered? Log in</a>
+        </Link>
         </div>
 
       </main>

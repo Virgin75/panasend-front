@@ -24,7 +24,10 @@ export default function Onboarding() {
 
 
   const logOut = () => {
-    ls.set('user', null)
+    ls.clear()
+    document.cookie.split(';').forEach(function(c) {
+      document.cookie = c.trim().split('=')[0] + '=;' + 'expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+    });
     Router.push('/login')
   }
 
@@ -62,7 +65,8 @@ export default function Onboarding() {
       console.log(workspace_data)
 
       ls.set('onboardingDone', true)
-      Router.push('/')
+      ls.set('first_wks', workspace_data.id)
+      Router.push('/wks/'+workspace_data.id+'/campaigns')
     }
     catch (bug) {
       setError('An error occured while completing your onboarding.')
