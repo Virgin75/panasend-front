@@ -1,29 +1,25 @@
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Head from 'next/head'
 import IsLoggedInOrRedirect from '../../../components/isLoggedIn'
 import TwoColumnsLayout from '../../../components/TwoColumnsLayout'
 import NavigationMenu from '../../../components/NavigationMenu'
 import ls from 'localstorage-slim';
+import {get_campaigns_list, get_workspaces_list} from '../../../api_calls'
 
 
 export default function Campaign({ workspaces, current_wks, campaigns }) {
+  console.log("aa")
+  console.log(campaigns)
 
   return (
     <IsLoggedInOrRedirect>
     <div>
-    <Head>
-      <title>index Panasend</title>
-      <meta name="description" content="Log in to your Panasend account." />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
-    
     <TwoColumnsLayout>
       <NavigationMenu workspaces={workspaces} current_wks={current_wks}/>
 
       <main>
         
-          <h1>
+      <h1>
             Campaigns
           </h1>
           {campaigns.map((campaign)=>
@@ -50,28 +46,10 @@ export default function Campaign({ workspaces, current_wks, campaigns }) {
 }
 
 export async function getServerSideProps(context) {
-    // Fetch data from external API
-    var requestOptions = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + context.req.cookies['access'],
-      }
-    };
-    const res = await fetch('http://127.0.0.1:8000/users/workspaces', requestOptions)
-    const workspaces = await res.json()
-    let current_wks = {}
 
-    for (let i=0; i<workspaces.length; i++) {
-      if (workspaces[i].id == context.params['wks_id']) {
-        current_wks['id'] = workspaces[i].id
-        current_wks['name'] = workspaces[i].name
-      }
-    }
-
-    const res_campaigns = await fetch('http://127.0.0.1:8000/campaigns/campaigns?workspace_id=' + context.params['wks_id'], requestOptions)
-    const campaigns = await res_campaigns.json()
+    // Fetch data from API
+    let campaigns = await get_campaigns_list(context)
+    let { workspaces, current_wks } = await get_workspaces_list(context)
   
     // Pass data to the page via props
     return { props: { workspaces, current_wks, campaigns } }
