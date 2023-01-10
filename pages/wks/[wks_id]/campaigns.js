@@ -8,8 +8,6 @@ import {get_campaigns_list, get_workspaces_list} from '../../../api_calls'
 
 
 export default function Campaign({ workspaces, current_wks, campaigns }) {
-  console.log("aa")
-  console.log(campaigns)
 
   return (
     <IsLoggedInOrRedirect>

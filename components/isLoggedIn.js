@@ -5,6 +5,7 @@ import ls from 'localstorage-slim';
 
 
 export default function IsLoggedIn({ children }) {
+  const router = useRouter()
 
   const getCookieValue = (name) => (
     document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
@@ -18,16 +19,17 @@ export default function IsLoggedIn({ children }) {
 
     console.log(user)
     if (user == undefined || user == null || user == '') {
-      Router.push('/login')
+      router.push('/login')
     }
     else if (!onboardingDone) {
-        Router.push('/onboarding')
+        router.push('/onboarding')
     }
     else if (onboardingDone && Router.pathname == "/onboarding") {
         console.log(workspaces)
-        Router.push('/wks/'+workspaces[0][0])
+        router.push('/wks/'+workspaces[0][0])
     }
-  }, [])
+    console.log('router called')
+  }, [router])
   // End of auth token management
 
 

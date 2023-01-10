@@ -34,15 +34,20 @@ export default function Login() {
     try {
       const res = await fetch("http://127.0.0.1:8000/users/signin", requestOptions)
       const res_data = await res.json()
+      console.log(res_data)
       ls.set('onboardingDone', res_data.user.onboarding_done)
       ls.set('user_details', {
         first_name: res_data.user.first_name,
         last_name: res_data.user.last_name,
         email: res_data.user.email
       })
-      ls.set('first_wks', res_data.workspaces_id[0][0])
-      console.log(res_data.workspaces_id)
-      Router.push('/wks/'+res_data.workspaces_id[0][0]+'/campaigns')
+      if (res_data.user.onboarding_done) {
+        ls.set('first_wks', res_data.workspaces_id[0][0])
+        Router.push('/wks/'+res_data.workspaces_id[0][0]+'/campaigns')
+      }
+      else {
+        Router.push('/onboarding')
+      }
     }
     catch (bug) {
       setError('An error occured while signin. Maybe your credentials are invalid?')

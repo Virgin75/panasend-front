@@ -10,11 +10,19 @@
   },
   "dependencies": {
     "@nextui-org/react": "^1.0.0-beta.10",
+    "easy-email-core": "^4.3.7",
+    "easy-email-editor": "^4.3.7",
+    "easy-email-extensions": "^4.3.8",
+    "grapesjs": "^0.19.5",
+    "grapesjs-preset-newsletter": "^0.2.21",
+    "grapesjs-react": "^4.0.1",
     "localstorage-slim": "^2.3.0",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "18.2.0",
+    "react-email-editor": "^1.6.3",
+    "react-final-form": "^6.5.9",
     "react-simple-snackbar": "^1.1.11"
   },
   "devDependencies": {

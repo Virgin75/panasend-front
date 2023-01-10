@@ -37,7 +37,7 @@ export default function RightSection(props) {
         <p>{props.description}</p>
       </div>
 
-      <div style={{borderRadius: '16px', backgroundColor: '#fafafa', padding: '3rem'}}>
+      <div>
         {<props.content />}
       </div>
     </div>

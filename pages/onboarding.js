@@ -11,6 +11,7 @@ import Router, { useRouter } from 'next/router'
 
 
 export default function Onboarding() {
+  const router = useRouter()
 
   //Company fields
   const [company, setCompany] = useState('') // And also Workspace field
@@ -31,10 +32,14 @@ export default function Onboarding() {
     Router.push('/login')
   }
 
+  const getCookieValue = (name) => (
+    document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)')?.pop() || ''
+  )
+
   const handleSubmit = async(e) => {
     e.preventDefault();
 
-    const token = ls.get('user')
+    const token = getCookieValue("access")
 
     var companyOptions = {
       method: 'POST',
@@ -66,7 +71,7 @@ export default function Onboarding() {
 
       ls.set('onboardingDone', true)
       ls.set('first_wks', workspace_data.id)
-      Router.push('/wks/'+workspace_data.id+'/campaigns')
+      router.push('/wks/'+workspace_data.id+'/campaigns')
     }
     catch (bug) {
       setError('An error occured while completing your onboarding.')

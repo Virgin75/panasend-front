@@ -66,6 +66,8 @@ export default function NavigationMenu(props) {
       display: 'flex', 
       flexDirection: 'column',
       height: '93vh',
+      position: 'sticky',
+      top: '35px'
     }}>
       <div style={{
         display: 'flex',
@@ -123,13 +125,14 @@ export default function NavigationMenu(props) {
             </Popover.Trigger>
             <Popover.Content css={{ padding: '20px' }}>
               <>
-                <Text css={{ p: "$10",fontWeight: 700 }}>
+                <Text css={{ p: "$10",fontWeight: 400, textAlign: 'left' }}>
                   Select the workspace you want to work on:
                 </Text>
                 <div style={{height: '250px'}}>
                   {props.workspaces.map((wks)=>
                   <>
-                    <h4 style={{paddingTop: '8px', paddingBottom: '8px'}}><Link href={'/wks/'+wks['id']+'/campaigns'}>{wks['name']}</Link></h4>
+                    <h5 onClick={() => setPopoverVisible(false)} style={{paddingTop: '16px', paddingBottom: '8px'}}><Link href={'/wks/'+wks['id']+'/campaigns'}>{wks['name']}</Link></h5>
+                    <hr></hr>
                   </>
                   )}
                 </div>
@@ -162,9 +165,15 @@ export default function NavigationMenu(props) {
         </Text>
       
       </Collapse>
-      <a href='/emails'>
-        <Collapse showArrow={false} animated={false} title="Email templates" contentLeft={<Image src={EmailIcon} height={35} width={35}/>}></Collapse>
-      </a>
+      <Link href={"/wks/"+ props.current_wks.id +"/emails"}>
+        <Collapse 
+          showArrow={false} 
+          animated={false} 
+          title="Email templates" 
+          contentLeft={<Image src={EmailIcon} height={35} width={35}/>}
+        >
+        </Collapse>
+      </Link>
     </Collapse.Group>
     
     <Separator />
